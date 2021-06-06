@@ -1,3 +1,16 @@
+"""
+How to use:
+python Space_autocut.py <MP3> <window_size>
+
+subsitute <MP3> with the mp3 file you want to remove silence, <window_size> for desired window size.
+
+Eg: python Space_autocut.py test.py 5
+
+The code will output the result as output.mp3
+
+"""
+
+
 from pydub import AudioSegment
 from pydub.playback import play
 import array
@@ -49,13 +62,13 @@ def write(f, sr, x, normalized=False):
 
 # extract = audiofile[startTime:endTime]
 extract = audiofile
-extract.export( '../Documents/sound/test.mp3', format="mp3")
-sr, numeric_array = read('../Documents/sound/test.mp3')
-
+extract.export( 'test.mp3', format="mp3")
+sr, numeric_array = read(file_name)
+# print(numeric_array)
 arr = []
 # finding average amplitide
 
-print(len(numeric_array))
+# print(len(numeric_array))
 def mvavg_calc(numeric_array, window_size):
     moving_avg = []
     window_size -= 1
@@ -90,14 +103,18 @@ def avg_calc(numeric_array):
     ref = [sm[0]/ (len(numeric_array)), sm[1] / (len(numeric_array))]
     return ref
 
-ref = avg_calc(numeric_array)
-avg = mvavg_calc(numeric_array, 5)
-print(ref)
+
+# main code:
+
+ref = avg_calc(numeric_array) # reference value
+avg = mvavg_calc(numeric_array, 1)
+# print(ref)
 
 count = 0
 numeric_list = numeric_array.tolist()
 idx = 0
-for i in numeric_array:
+print('deleting silence')
+for i in tqdm(range(len(numeric_array))):
     if ignoring:
         count += 1
         if (count) >= ignore:
@@ -105,19 +122,17 @@ for i in numeric_array:
             ignoring = False
             idx += 1
             continue
-        arr.append(i)
+        arr.append(numeric_array[i])
         idx += 1
         continue
     if avg[idx][0] > ref[0] and avg[idx][1] > ref[1]:
         while count < ignore:
             count += 1
         count = 0
-        arr.append(i)
+        arr.append(numeric_array[i])
         ignoring = True
         idx += 1
         continue
     idx += 1
 
-a = np.array(arr)
-print(a)
 write('out.mp3', sr, a)
