@@ -107,7 +107,7 @@ def avg_calc(numeric_array):
 # main code:
 
 ref = avg_calc(numeric_array) # reference value
-avg = mvavg_calc(numeric_array, 1)
+avg = mvavg_calc(numeric_array, sys.argv[2])
 # print(ref)
 
 count = 0
