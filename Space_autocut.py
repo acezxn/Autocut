@@ -135,4 +135,5 @@ for i in tqdm(range(len(numeric_array))):
         continue
     idx += 1
 
+a = np.array(arr)
 write('out.mp3', sr, a)
